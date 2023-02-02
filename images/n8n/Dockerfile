@@ -6,6 +6,7 @@ RUN if [ -z "$N8N_VERSION" ] ; then echo "The N8N_VERSION argument is missing!" 
 
 ENV N8N_VERSION=${N8N_VERSION}
 ENV NODE_ENV=production
+
 RUN set -eux; \
 	apkArch="$(apk --print-arch)"; \
 	case "$apkArch" in \
@@ -17,6 +18,24 @@ RUN set -eux; \
 	esac && \
 	find /usr/local/lib/node_modules/n8n -type f -name "*.ts" -o -name "*.js.map" -o -name "*.vue" | xargs rm && \
 	rm -rf /root/.npm
+
+# INSTALL PUPPETEER
+
+# Installs latest Chromium (100) package.
+RUN apk add --no-cache \
+	chromium \
+	nss \
+	freetype \
+	harfbuzz \
+	ca-certificates \
+	ttf-freefont
+
+# Tell Puppeteer to skip installing Chrome.
+# We'll be using the installed package.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# !INSTALL PUPPETEER
 
 # Set a custom user to not have n8n run as root
 USER root

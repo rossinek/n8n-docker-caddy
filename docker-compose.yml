@@ -20,6 +20,8 @@ services:
     restart: always
     ports:
       - 5678:5678
+    cap_add:
+      - SYS_ADMIN
     environment:
       - N8N_BASIC_AUTH_ACTIVE=true
       - N8N_BASIC_AUTH_USER
